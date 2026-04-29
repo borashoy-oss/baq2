@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>📋 Бағалау парағы</title>
+    <style>
+        :root {
+            --bg: #f0f4f8;
+            --card: #ffffff;
+            --text: #1a202c;
+            --text-light: #4a5568;
+            --border: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+            user-select: none;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: var(--card);
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+            padding: 30px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 800;            color: #2d3748;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #718096;
+            font-size: 1.1rem;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+            padding: 12px;
+            background: #f7fafc;
+            border-radius: 16px;
+            font-size: 0.95rem;
+            color: #4a5568;
+        }
+
+        .legend span {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .student-row {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            background: #f8fafc;
+            border-radius: 16px;
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
+            gap: 12px;
+        }
+
+        .student-row.graded {
+            background: #edf2f7;
+            border-color: #cbd5e0;        }
+
+        .num-badge {
+            width: 36px;
+            height: 36px;
+            background: #4a90e2;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .student-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .btns {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .grade-btn {
+            width: 48px;
+            height: 48px;
+            border: 2px solid #cbd5e0;
+            border-radius: 12px;
+            background: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .grade-btn:active {
+            transform: scale(0.92);
+        }
+
+        /* Түстер шкаласы */
+        .g1  { color: #e53e3e; border-color: #e53e3e; }
+        .g2  { color: #dd6b20; border-color: #dd6b20; }        .g3  { color: #d69e2e; border-color: #d69e2e; }
+        .g4  { color: #b7c443; border-color: #b7c443; }
+        .g5  { color: #84cc16; border-color: #84cc16; }
+        .g6  { color: #4ade80; border-color: #4ade80; }
+        .g7  { color: #22c55e; border-color: #22c55e; }
+        .g8  { color: #16a34a; border-color: #16a34a; }
+        .g9  { color: #15803d; border-color: #15803d; }
+        .g10 { color: #166534; border-color: #166534; }
+
+        .grade-btn.selected {
+            color: white !important;
+            border-color: transparent !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            transform: scale(1.05);
+        }
+
+        .g1.selected { background: #e53e3e; }
+        .g2.selected { background: #dd6b20; }
+        .g3.selected { background: #d69e2e; }
+        .g4.selected { background: #b7c443; }
+        .g5.selected { background: #84cc16; }
+        .g6.selected { background: #4ade80; }
+        .g7.selected { background: #22c55e; }
+        .g8.selected { background: #16a34a; }
+        .g9.selected { background: #15803d; }
+        .g10.selected { background: #166534; }
+
+        .stats-panel {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 18px;
+            color: white;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-val {
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;            opacity: 0.9;
+            margin-top: 4px;
+        }
+
+        .controls {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .reset-btn {
+            padding: 14px 32px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            background: #e53e3e;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 14px rgba(229, 62, 62, 0.3);
+        }
+
+        .reset-btn:active {
+            transform: scale(0.96);
+            background: #c53030;
+        }
+
+        @media (max-width: 900px) {
+            .student-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .btns {
+                align-self: flex-start;
+            }
+            h1 { font-size: 1.6rem; }
+            .student-name { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📋 Бағалау парағы</h1>
+            <p class="subtitle">Оқушыны таңдап, 1-ден 10-ға дейін баға қойыңыз</p>
+        </header>
+
+        <div class="legend">
+            <span><span class="dot" style="background:#e53e3e"></span> 1 – Төмен</span>            <span><span class="dot" style="background:#84cc16"></span> 5 – Орташа</span>
+            <span><span class="dot" style="background:#166534"></span> 10 – Өте жақсы</span>
+        </div>
+
+        <div id="studentsList"></div>
+
+        <div class="stats-panel">
+            <div class="stat">
+                <div class="stat-val" id="countVal">0</div>
+                <div class="stat-label">Бағаланған</div>
+            </div>
+            <div class="stat">
+                <div class="stat-val" id="avgVal">—</div>
+                <div class="stat-label">Орташа балл</div>
+            </div>
+            <div class="stat">
+                <div class="stat-val" id="totalVal">12</div>
+                <div class="stat-label">Барлығы</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="reset-btn" onclick="resetAll()">🔄 Бәрін тазалау</button>
+        </div>
+    </div>
+
+    <script>
+        const students = [
+            "Алпысбай Дарын",
+            "Аманбек Тілеужан",
+            "Аманбек Ханшайым",
+            "Буркитбаева Инжу",
+            "Буркитбаева Улпан",
+            "Баймұрынов Әбілмансұр",
+            "Қалқаман Айым",
+            "Қаһарман Әмір",
+            "Сауранбаева Сезім",
+            "Саят Ақниет",
+            "Жамантаева Тамирис",
+            "Қанат Кәусәр"
+        ];
+
+        // Массив түрінде сақтаймыз (баға қойылмаса null)
+        let grades = new Array(students.length).fill(null);
+
+        function init() {
+            const container = document.getElementById('studentsList');
+            container.innerHTML = '';
+
+            students.forEach((name, idx) => {                const row = document.createElement('div');
+                row.className = 'student-row';
+                row.id = `row-${idx}`;
+
+                // Нөмір
+                const num = document.createElement('div');
+                num.className = 'num-badge';
+                num.textContent = idx + 1;
+
+                // Аты
+                const nameEl = document.createElement('div');
+                nameEl.className = 'student-name';
+                nameEl.textContent = name;
+
+                // Түймелер
+                const btns = document.createElement('div');
+                btns.className = 'btns';
+
+                for (let i = 1; i <= 10; i++) {
+                    const btn = document.createElement('button');
+                    btn.className = `grade-btn g${i}`;
+                    btn.textContent = i;
+                    btn.onclick = () => toggleGrade(idx, i);
+                    btns.appendChild(btn);
+                }
+
+                row.appendChild(num);
+                row.appendChild(nameEl);
+                row.appendChild(btns);
+                container.appendChild(row);
+            });
+        }
+
+        function toggleGrade(studentIdx, value) {
+            const row = document.getElementById(`row-${studentIdx}`);
+            const buttons = row.querySelectorAll('.grade-btn');
+
+            // Егер дәл сол бағаны қайта басқан болса -> өшіру
+            if (grades[studentIdx] === value) {
+                grades[studentIdx] = null;
+                row.classList.remove('graded');
+                buttons.forEach(b => b.classList.remove('selected'));
+            } else {
+                grades[studentIdx] = value;
+                row.classList.add('graded');
+                buttons.forEach((b, i) => {
+                    b.classList.toggle('selected', (i + 1) === value);
+                });
+            }
+            updateStats();        }
+
+        function updateStats() {
+            const activeGrades = grades.filter(g => g !== null);
+            const count = activeGrades.length;
+
+            document.getElementById('countVal').textContent = count;
+
+            if (count > 0) {
+                const sum = activeGrades.reduce((a, b) => a + b, 0);
+                const avg = (sum / count).toFixed(1);
+                document.getElementById('avgVal').textContent = avg;
+            } else {
+                document.getElementById('avgVal').textContent = '—';
+            }
+        }
+
+        function resetAll() {
+            if (confirm('Барлық бағалар өшіріледі. Жалғастырасыз ба?')) {
+                grades.fill(null);
+                document.querySelectorAll('.student-row').forEach(row => {
+                    row.classList.remove('graded');
+                    row.querySelectorAll('.grade-btn').forEach(btn => {
+                        btn.classList.remove('selected');
+                    });
+                });
+                updateStats();
+            }
+        }
+
+        // Бет жүктелгенде іске қосу
+        init();
+    </script>
+</body>
+</html>
